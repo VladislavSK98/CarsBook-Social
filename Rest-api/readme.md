@@ -1,6 +1,6 @@
-# 🏎️ CarsBook Social 
+# 🏎️ Car Racing Hub
 
-**CarsBook Social** is a social platform for car enthusiasts where users can showcase their vehicles, track performance, post updates, and share their passion for racing.
+**Car Racing Hub** is a social platform for car enthusiasts where users can showcase their vehicles, track performance, post updates, and share their passion for racing.
 
 ![Car Racing Hub Banner](https://via.placeholder.com/1000x300?text=Car+Racing+Hub+🚗+🔥)
 
@@ -48,8 +48,9 @@
 
 ### 1. Clone the repository
 
-git clone https://github.com/VladislavSK98/CarsBook-Social.git
-cd CarsBook-Social
+```bash
+git clone https://github.com/VladislavSK98/Car-Racing-Hub.git
+cd Car-Racing-Hub
 
 
 cd Rest-Api
@@ -62,7 +63,7 @@ Runs on: http://localhost:5000
 
 Start Frontend
 
-cd ../carsbook-social
+cd ../car-racing-hub
 npm install
 npm run dev
 Runs on: http://localhost:5173
