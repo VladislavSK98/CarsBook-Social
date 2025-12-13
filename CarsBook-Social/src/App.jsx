@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { lazy, Suspense } from 'react'
+import { Routes, Route } from 'react-router'
+
+import UserProvider from './providers/UserProvider'
+
+import Header from './components/Header/Header';
+import Home from './components/home/Home';
+import Login from './components/login/Login'
+import Register from './components/register/Register';
+import Logout from './components/logout/Logout';
+import AuthGuard from './components/guards/AuthGuard';
+import styles from './App.module.css';
+import GuestGuard from './components/guards/GuestGuard';
+import { ToastContainer } from 'react-toastify';
+import MyGarage from './components/Garage/Garage';
+import CarDetails from './components/CarDetails/CarDetails';
+import CarEdit from './components/Car-Edit/CarEdit';
+import Parking from './components/Parking/Parking'; 
+import Tracks from './components/Tracks/Tracks';
+//import Footer from './components/Footer/Footer';
+
+
+
+const Admin = lazy(() => import('./components/admin/Admin'));
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (
+        <UserProvider>
+            <div className={styles.app}>
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+                <Header />
+
+                <main id="main-content">
+                    <Routes>
+                        <Route index element={<Home />} />
+                        <Route path="/parking" element={<Parking />} />
+                        <Route element={<AuthGuard />}>
+                            <Route path="/garage" element={<MyGarage />} />
+                            <Route path="/cars/:carId" element={<CarDetails />} />
+                            <Route path="/cars/edit/:carId" element={<CarEdit />} />
+                            <Route path="/tracks" element={<Tracks/>} />
+                         
+                            <Route path="/logout" element={<Logout />} />
+                        </Route>
+                        <Route element={<GuestGuard />}>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                        </Route>
+                        <Route path="/admin" element={(
+                            <Suspense fallback={<p>Loading...</p>}>
+                                <Admin />
+                            </Suspense>
+                        )} />
+                    </Routes>
+                </main>
+
+                <ToastContainer />
+            </div>
+            {/* <Footer /> */}
+        </UserProvider>
+    )
 }
 
 export default App

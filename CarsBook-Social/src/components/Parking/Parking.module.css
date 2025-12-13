@@ -1,0 +1,332 @@
+/* Основен контейнер */
+.parking-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: var(--color-text);
+}
+
+/* Хедър */
+.parking-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.parking-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  color: var(--color-primary);
+}
+
+.parking-header p {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+}
+
+/* Grid за секциите */
+.parking-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Всяка секция */
+.parking-section {
+  background: var(--color-bg-card);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.parking-section:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(30, 58, 138, 0.2);
+}
+
+/* Grid вътре в секциите за постове, коли и тракове */
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Карти */
+.card {
+  background: var(--color-bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(30, 58, 138, 0.3);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.card a.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.card a.btn:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+/* Responsive padding за секциите */
+@media (max-width: 768px) {
+  .parking-page {
+    padding: 20px 10px;
+  }
+  
+  .parking-header h1 {
+    font-size: 2rem;
+  }
+  
+  .parking-header p {
+    font-size: 1rem;
+  }
+}
+
+/* ===== Posts Section ===== */
+.post-card {
+  position: relative;
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 16px;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(30, 58, 138, 0.3);
+}
+
+.post-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: var(--color-primary);
+}
+
+.post-card .post-badge {
+  font-size: 0.8rem;
+  background: var(--color-primary-light);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-right: 6px;
+}
+
+/* ===== Cars Section ===== */
+.car-card {
+  position: relative;
+  background: #0f1b2b;
+  border-radius: 16px;
+  padding: 16px;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(30, 58, 138, 0.4);
+  border: 1px solid var(--color-primary-light);
+}
+
+.car-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.car-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+/* ===== Tracks Section ===== */
+.track-card {
+  position: relative;
+  background: #101f33;
+  border-radius: 16px;
+  padding: 16px;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.track-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 45px rgba(30, 58, 138, 0.35);
+}
+
+.track-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.track-badge {
+  font-size: 0.75rem;
+  background: var(--color-primary-light);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+
+/* Нови стилове за формата за добавяне на постове */
+.new-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+  background: #0a1428; /* тъмен фон */
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.post-input {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  font-size: 1rem;
+  background: #1a1f36;
+  color: white;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.post-input:focus {
+  border-color: var(--color-primary);
+}
+
+.post-textarea {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  font-size: 1rem;
+  min-height: 100px;
+  background: #1a1f36;
+  color: white;
+  outline: none;
+  resize: vertical;
+  transition: border 0.2s ease;
+}
+
+.post-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.post-submit-btn {
+  align-self: flex-end;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.post-submit-btn:hover {
+  background: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+/* Коментари под постовете */
+.comments-section {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-card {
+  background: #1a1f36;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  color: white;
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: #1a1f36;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.comment-input:focus {
+  border-color: var(--color-primary);
+}
+
+.comment-btn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.comment-btn:hover {
+  background: var(--color-primary-light);
+  transform: translateY(-2px);
+}

@@ -1,0 +1,316 @@
+:root {
+  --imperial-blue: #1c2c5b;
+  --sky-blue: #6ca0dc;
+  --light-blue: #cfe6ff;
+  --accent-yellow: #f5e58a;
+  --black: #0b0b0b;
+  --white: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, var(--imperial-blue), #0e162f);
+  color: var(--white);
+}
+
+.btn {
+  margin-top: auto;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--sky-blue);
+  color: var(--black);
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--accent-yellow);
+  transform: scale(1.05);
+}
+
+/* .card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+} */
+ .card {
+  background: var(--imperial-blue);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--white);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.foncard {
+  background: var(--imperial-blue);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--white);
+}
+
+.foncard img {
+  width: 80%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+
+.card h3 {
+  margin: 8px 0;
+  color: var(--light-blue);
+}
+
+.card p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.home-grid,
+.parking-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.section-highlight {
+  margin: 80px 0;
+}
+
+.section-highlight h1 {
+  font-size: 2rem;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--accent-yellow);
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.section-highlight h1::after {
+  content: "";
+  width: 80px;
+  height: 4px;
+  background: var(--sky-blue);
+  display: block;
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+
+h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+h3 {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+.hero-banner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+.hero-banner img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.welcome-message h2 {
+  font-size: 2.8rem;
+}
+
+.welcome-message h3 {
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.section-highlight {
+  margin-bottom: 72px;
+}
+
+.section-highlight h1 {
+  font-size: 2rem;
+  margin-bottom: 32px;
+  color: var(--color-primary-light);
+}
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+  align-items: stretch;
+}
+.tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.track-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--color-bg-card);
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.track-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.track-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: var(--color-primary-light);
+}
+
+.track-card p {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.track-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(30, 58, 138, 0.3);
+}
+.quote-section {
+  margin: 64px 0;
+  padding: 32px;
+  background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+  border-radius: 20px;
+  color: #f0f0f0;
+  text-align: center;
+}
+
+.quote-section h2 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: var(--color-primary);
+  letter-spacing: 1px;
+}
+
+.quote-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.quote-container blockquote {
+  font-style: italic;
+  font-size: 1.1rem;
+  padding: 20px 24px;
+  margin: 0 auto;
+  max-width: 800px;
+  border-left: 6px solid var(--color-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.quote-container blockquote:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(30, 58, 138, 0.3);
+}
+
+.quote-container blockquote::before {
+  content: "“";
+  font-size: 2.5rem;
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  color: var(--color-primary);
+}
+
+.quote-container blockquote::after {
+  content: "”";
+  font-size: 2.5rem;
+  position: absolute;
+  bottom: -10px;
+  right: 12px;
+  color: var(--color-primary);
+}
+
+/* Стилизиране на основния контейнер */
+#box {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* центрира всичко хоризонтално */
+  padding: 0 20px; /* празно място отстрани */
+  max-width: 1200px; /* ограничаваме ширината */
+  margin: 0 auto; /* центриране на екрана */
+  box-sizing: border-box;
+}
+
+/* Main content */
+#main-content {
+  width: 100%;
+}
+
+/* За body и html */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+}
+
+/* Hero banner и grid секции да не се разтягат на пълния екран */
+.hero-banner, .section-highlight, .dashboard-section, .quote-section {
+  width: 100%;
+  max-width: 1200px; /* ограничаваме */
+  margin: 0 auto; /* центриране */
+}

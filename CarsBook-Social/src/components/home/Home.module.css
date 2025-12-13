@@ -1,0 +1,66 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 64px;
+  align-items: center;
+}
+
+.heroText h2 {
+  font-size: 2.6rem;
+  margin-bottom: 12px;
+}
+
+.heroText h3 {
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+.heroBtn {
+  background: var(--color-primary);
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: white;
+  display: inline-block;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.heroBtn:hover {
+  transform: translateY(-3px);
+  background: var(--color-primary-light);
+}
+
+.section {
+  margin-bottom: 56px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(30, 58, 138, 0.3);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.card a {
+  color: var(--color-primary-light);
+}

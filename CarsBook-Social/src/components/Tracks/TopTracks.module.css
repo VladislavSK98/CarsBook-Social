@@ -1,0 +1,57 @@
+.tracksContainer {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 1rem;
+  }
+  
+  .tracksGrid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .trackCard {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .trackCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.3);
+  }
+  
+  .trackImage {
+    width: 100%;
+    height: 60%;
+    object-fit: cover; /* Това ще запази съотношението на изображението */
+    border-radius: 8px;
+  }
+  
+  .trackDetails {
+    padding: 15px;
+    text-align: left;
+    color: white;
+  }
+  
+  .trackDetails h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  
+  .trackDetails p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+  
