@@ -1,11 +1,13 @@
-// src/pages/Tracks.jsx
+// src/components/Tracks/Tracks.jsx
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAllTracks } from '../../api/tracksApi'; 
-
+// import styles from './Tracks.module.css';
 
 const Tracks = () => {
     const [tracks, setTracks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchTracks() {
@@ -43,7 +45,12 @@ const Tracks = () => {
               <p>
                 <strong>Length:</strong> {track.length} m
               </p>
-              
+              <button 
+                className="view-details-btn" 
+                onClick={() => navigate(`/tracks/${track._id}`)}
+              >
+                View Details
+              </button>
             </div>
           ))}
         </div>

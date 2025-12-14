@@ -1,23 +1,37 @@
+// src/components/Garage/Garage.jsx
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../contexts/UserContext";
-import { getMyGarageData } from "../../api/garageApi";
-import { addCar, deleteCar } from "../../api/carsApi";
-import { useNavigate } from "react-router-dom";
-import { addCarToGarage } from "../../api/garageApi";
-import { createPost } from "../../api/postApi";
-import { getUserPosts } from "../../api/garageApi";
+import {
+  getMyGarageData,
+  addCarToGarage,
+  getUserPosts,
+} from "../../api/garageApi";
+import { addCar, deleteCar, updateCar } from "../../api/carsApi";
+import { createPost, updatePost, deletePost } from "../../api/postApi";
 import { addTrack } from "../../api/tracksApi";
+import { addTrackForUser } from "../../api/tracksApi";
+import { useNavigate } from "react-router-dom";
 import styles from "./Garage.module.css";
-import PostSection from "../Parking/PostSection";
 
 export default function MyGarage() {
-  const { user, accessToken } = useUserContext();
-  const [garageData, setGarageData] = useState(null);
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
+  const [garage, setGarage] = useState({ cars: [], tracks: [], times: [] });
+  const [posts, setPosts] = useState([]);
+
   const [showCarForm, setShowCarForm] = useState(false);
-  const [showTrackForm, setShowTrackForm] = useState(false);
   const [showPostForm, setShowPostForm] = useState(false);
+  const [showTrackForm, setShowTrackForm] = useState(false);
+
+  const [isAddingCar, setIsAddingCar] = useState(false);
+  const [reloadGarage, setReloadGarage] = useState(0);
+
   const [editingCarId, setEditingCarId] = useState(null);
-  const [editCarData, setEditCarData] = useState(null);
+  const [editCarData, setEditCarData] = useState({});
+
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editPostData, setEditPostData] = useState({ title: "", text: "" });
 
   const [newCar, setNewCar] = useState({
     make: "",
@@ -28,41 +42,37 @@ export default function MyGarage() {
     mods: "",
   });
 
+  const [newPost, setNewPost] = useState({ title: "", text: "" });
+
   const [newTrack, setNewTrack] = useState({
     name: "",
     location: "",
     imageUrl: "",
   });
 
-  const [newPost, setNewPost] = useState({
-    title: "",
-    content: "",
-  });
-
-  const navigate = useNavigate();
-
+  // ===== LOAD DATA =====
   useEffect(() => {
-    if (user?._id) {
-      getMyGarageData(user._id).then(setGarageData);
-      getUserPosts(user._id).then((userPosts) => {
-        setGarageData((prev) => ({ ...prev, posts: userPosts }));
-      });
-    }
-  }, [user]);
+    if (!user?._id) return;
 
-  if (!garageData) return <p>Loading...</p>;
+    getMyGarageData(user._id).then(setGarage).catch(console.error);
 
-  const handleCarChange = (e) =>
-    setNewCar({ ...newCar, [e.target.name]: e.target.value });
-  const handleEditChange = (e) =>
-    setEditCarData({ ...editCarData, [e.target.name]: e.target.value });
+    getUserPosts(user._id).then(setPosts).catch(console.error);
+  }, [user, reloadGarage]);
 
+  // ===== CARS =====
   const handleAddCar = async (e) => {
     e.preventDefault();
+    setIsAddingCar(true);
+
     try {
-      const createdCar = await addCarToGarage(user._id, newCar); // 🛠️ тази промяна
-      setGarageData((prev) => ({ ...prev, cars: [...prev.cars, createdCar] }));
-      setShowCarForm(false);
+      const createdCar = await addCar(newCar);
+      await addCarToGarage(user._id, createdCar._id);
+
+      setGarage((g) => ({
+        ...g,
+        cars: [...g.cars, createdCar],
+      }));
+
       setNewCar({
         make: "",
         model: "",
@@ -72,367 +82,319 @@ export default function MyGarage() {
         mods: "",
       });
     } catch (err) {
-      alert("Error adding car: " + err.message);
+      console.error("Failed to add car", err);
+    } finally {
+      setIsAddingCar(false);
+    }
+
+    setReloadGarage((prev) => prev + 1);
+    setShowCarForm(false);
+  };
+
+  const handleDeleteCar = async (id) => {
+    try {
+      await deleteCar(id);
+      setGarage((g) => ({
+        ...g,
+        cars: g.cars.filter((c) => c._id !== id),
+      }));
+    } catch (err) {
+      console.error("Failed to delete car", err);
     }
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleEditCar = async (e) => {
     e.preventDefault();
+
     try {
-      await updateCar(editingCarId, editCarData);
-      setGarageData((prev) => ({
-        ...prev,
-        cars: prev.cars.map((c) => (c._id === editingCarId ? editCarData : c)),
+      const updated = await updateCar(editingCarId, editCarData);
+      setGarage((g) => ({
+        ...g,
+        cars: g.cars.map((c) => (c._id === editingCarId ? updated : c)),
       }));
       setEditingCarId(null);
+      setEditCarData({});
     } catch (err) {
-      alert("Error editing car: " + err.message);
+      console.error("Failed to edit car", err);
     }
   };
 
-  const handleDeleteCar = async (carId) => {
+  // ===== POSTS =====
+  const handleCreatePost = async (e) => {
+    e.preventDefault();
+
+    if (!newPost.title || !newPost.text) return;
+
     try {
-      await deleteCar(carId);
-      setGarageData((prev) => ({
-        ...prev,
-        cars: prev.cars.filter((car) => car._id !== carId),
-      }));
-    } catch (err) {
-      alert("Error deleting car: " + err.message);
-    }
-  };
-
-  const handleEditClick = (car) => {
-    setEditingCarId(car._id);
-    setEditCarData({ ...car });
-  };
-
-  const handlePostChange = (e) => {
-    setNewPost({ ...newPost, [e.target.name]: e.target.value });
-  };
-
-  const handlePublishPost = async () => {
-    try {
-      const createdPost = await createPost({
+      const post = await createPost({
         title: newPost.title,
-        text: newPost.content,
-        themeId: "garage", // или друга стойност според нуждите
-        authorId: user._id,
+        text: newPost.text,
+        themeId: null, // default, ако няма тема
       });
-      setGarageData((prev) => ({
-        ...prev,
-        posts: [...(prev.posts || []), createdPost],
-      }));
-      setNewPost({ title: "", content: "" });
+
+      setPosts((prev) => [...prev, post]);
+      setNewPost({ title: "", text: "" });
       setShowPostForm(false);
     } catch (err) {
-      alert("Error publishing post: " + err.message);
+      console.error("Failed to create post", err);
     }
   };
 
-  const handleTrackChange = (e) => {
-    setNewTrack({ ...newTrack, [e.target.name]: e.target.value });
-  };
-
-  const handleAddTrack = async () => {
+  const handleDeletePost = async (id) => {
     try {
-      const createdTrack = await addTrack(newTrack);
-      alert(`Track "${createdTrack.name}" added!`);
-      setShowTrackForm(false);
-      setNewTrack({ name: "", location: "", imageUrl: "" });
+      await deletePost(id);
+      setPosts(posts.filter((p) => p._id !== id));
     } catch (err) {
-      alert("Error adding track: " + err.message);
+      console.error("Failed to delete post", err);
+      alert("Cannot delete post. Maybe you are not the owner.");
     }
   };
 
+  // ===== TRACKS =====
+  const handleAddTrack = async (e) => {
+    e.preventDefault();
+
+    try {
+      const track = await addTrack({ ...newTrack, userId: user._id });
+
+      setGarage((g) => ({
+        ...g,
+        tracks: [...g.tracks, track].filter((t) => t.owner === user._id),
+      }));
+
+       setNewTrack({ name: "", location: "", imageUrl: "", description: "", length: "" });
+    setShowTrackForm(false);
+    } catch (err) {
+      console.error("Failed to add track", err);
+    }
+    setShowTrackForm(false);
+    setReloadGarage(prev => prev + 1);
+  };
+
+  // ===== RENDER =====
   return (
     <section className={styles.garage}>
-      {/* 🔹 Профил секция */}
-      <div className="profile-header">
-        <img src={user.avatar || "https://i.pravatar.cc/100"} alt="Profile" />
+      {/* HEADER */}
+      <header className={styles.header}>
+        <img src={user.avatar || "https://i.pravatar.cc/120"} alt="avatar" />
         <div>
           <h1>{user.username}'s Garage</h1>
-          <p>Member since {new Date(user.createdAt).toLocaleDateString()}</p>
+          <p>🛠 Private space for cars & performance</p>
+        </div>
+      </header>
+
+      {/* STATS */}
+      <div className={styles.stats}>
+        <div>
+          <span>🚗 Cars</span>
+          <strong>{garage.cars.length}</strong>
+        </div>
+        <div>
+          <span>⚡ Total HP</span>
+          <strong>
+            {garage.cars.reduce((sum, c) => sum + Number(c.power || 0), 0)}
+          </strong>
+        </div>
+        <div>
+          <span>🏁 Tracks</span>
+          <strong>{garage.tracks.length}</strong>
+        </div>
+        <div>
+          <span>📝 Posts</span>
+          <strong>{posts.length}</strong>
         </div>
       </div>
 
-      {/* 🚗 My Cars */}
-      <section className="section my-cars">
-        <div className="section-header">
-          <h2>🚗 My Cars</h2>
-          <button onClick={() => setShowCarForm(!showCarForm)}>
-            {showCarForm ? "Cancel" : "+ Add Car"}
-          </button>
-        </div>
+      {/* TOOLBOX */}
+      <div className={styles.toolbox}>
+        <button onClick={() => setShowCarForm(true)}>🛠 Add Car</button>
+        <button onClick={() => setShowTrackForm(true)}>🏁 Add Track</button>
+        <button onClick={() => setShowPostForm(true)}>📝 New Post</button>
+      </div>
 
+      {/* CARS */}
+      <section className={styles.section}>
+        <h2>🚗 My Cars</h2>
         {showCarForm && (
-          <form onSubmit={handleAddCar} className="car-form">
-            <input
-              name="make"
-              value={newCar.make}
-              onChange={handleCarChange}
-              placeholder="Make"
-              required
-            />
-            <input
-              name="model"
-              value={newCar.model}
-              onChange={handleCarChange}
-              placeholder="Model"
-              required
-            />
-            <input
-              name="year"
-              value={newCar.year}
-              onChange={handleCarChange}
-              placeholder="Year"
-              required
-            />
-            <input
-              name="power"
-              value={newCar.power}
-              onChange={handleCarChange}
-              placeholder="Horsepower"
-              required
-            />
-            <input
-              name="imageUrl"
-              value={newCar.imageUrl}
-              onChange={handleCarChange}
-              placeholder="Image URL"
-            />
-            <textarea
-              name="mods"
-              value={newCar.mods}
-              onChange={handleCarChange}
-              placeholder="Modifications"
-            />
-            <button type="submit">Add Car</button>
-          </form>
-        )}
-
-        <div className="car-list">
-          {garageData.cars.length === 0 ? (
-            <p>No cars yet.</p>
-          ) : (
-            garageData.cars.map((car) => (
-              <div className="car-card" key={car._id}>
-                {editingCarId === car._id ? (
-                  <form onSubmit={handleEditSubmit} className="edit-car-form">
-                    <input
-                      name="make"
-                      value={editCarData.make}
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      name="model"
-                      value={editCarData.model}
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      name="year"
-                      value={editCarData.year}
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      name="power"
-                      value={editCarData.power}
-                      onChange={handleEditChange}
-                    />
-                    <input
-                      name="imageUrl"
-                      value={editCarData.imageUrl}
-                      onChange={handleEditChange}
-                    />
-                    <textarea
-                      name="mods"
-                      value={editCarData.mods}
-                      onChange={handleEditChange}
-                    />
-                    <button type="submit">💾 Save</button>
-                    <button type="button" onClick={() => setEditingCarId(null)}>
-                      Cancel
-                    </button>
-                  </form>
-                ) : (
-                  <>
-                    <img
-                      src={
-                        car.imageUrl ||
-                        "https://via.placeholder.com/200x120?text=No+Image"
-                      }
-                      alt={`${car.make} ${car.model}`}
-                    />
-                    <p>
-                      <strong>
-                        {car.make} {car.model}
-                      </strong>{" "}
-                      ({car.year}) ({car.power})
-                    </p>
-                    <p>{car.mods}</p>
-                    <div className="car-actions">
-                      <button onClick={() => navigate(`/cars/${car._id}`)}>
-                        🔍 Details
-                      </button>
-                      {car.ownerId === user._id && (
-                        <>
-                          <button onClick={() => handleEditClick(car)}>
-                            ✏️ Edit
-                          </button>
-                          <button onClick={() => handleDeleteCar(car._id)}>
-                            ❌ Delete
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-      {/* 🏁 My Tracks */}
-      <section className="section my-tracks">
-        <div className="section-header">
-          <h2>🏁 My Tracks</h2>
-          <button onClick={() => setShowTrackForm(!showTrackForm)}>
-            {showTrackForm ? "Cancel" : "+ Add Track"}
-          </button>
-        </div>
-
-        {showTrackForm && (
-          <form className="track-form">
-            <input
-              name="name"
-              value={newTrack.name}
-              onChange={handleTrackChange}
-              placeholder="Track Name"
-            />
-            <input
-              name="location"
-              value={newTrack.location}
-              onChange={handleTrackChange}
-              placeholder="Location"
-            />
-            <input
-              name="length"
-              value={newTrack.length}
-              onChange={handleTrackChange}
-              placeholder="Length (m)"
-            />
-            <input
-              name="imageUrl"
-              value={newTrack.imageUrl}
-              onChange={handleTrackChange}
-              placeholder="Image URL"
-            />
-            <button type="button" onClick={handleAddTrack}>
-              Add Track
+          <form onSubmit={handleAddCar} className={styles.form}>
+            {Object.keys(newCar).map((k) => (
+              <input
+                key={k}
+                placeholder={k}
+                value={newCar[k]}
+                onChange={(e) => setNewCar({ ...newCar, [k]: e.target.value })}
+              />
+            ))}
+            <button disabled={isAddingCar}>
+              {isAddingCar ? "Adding..." : "Add"}
             </button>
           </form>
         )}
 
-        <div className="track-list">
-          {garageData.tracks?.length > 0 ? (
-            garageData.tracks.map((track) => (
-              <div className="track-card" key={track._id}>
-                <img
-                  src={
-                    track.imageUrl ||
-                    "https://via.placeholder.com/200x120?text=No+Image"
-                  }
-                  alt={track.name}
-                />
-                <h3>{track.name}</h3>
-                <p>{track.location}</p>
-                <p>{track.length} m</p>
+        <div className={styles.carsGrid}>
+          {garage.cars.map((car) => (
+            <div key={car._id} className={styles.carCard}>
+              <img
+                src={car.imageUrl || "https://via.placeholder.com/400x200"}
+                alt=""
+              />
+              <h3>
+                {car.make} {car.model}
+              </h3>
+              <p>
+                {car.year} · {car.power} hp
+              </p>
+
+              <div className={styles.actions}>
+                <button onClick={() => navigate(`/cars/${car._id}`)}>
+                  Details
+                </button>
+                <button onClick={() => setEditingCarId(car._id)}>Edit</button>
+                <button onClick={() => handleDeleteCar(car._id)}>Delete</button>
               </div>
-            ))
-          ) : (
-            <p>No tracks yet.</p>
-          )}
+
+              {editingCarId === car._id && (
+                <form onSubmit={handleEditCar} className={styles.form}>
+                  {Object.keys(car)
+                    .filter((k) => k !== "_id")
+                    .map((k) => (
+                      <input
+                        key={k}
+                        defaultValue={car[k]}
+                        onChange={(e) =>
+                          setEditCarData({
+                            ...editCarData,
+                            [k]: e.target.value,
+                          })
+                        }
+                      />
+                    ))}
+                  <button>Save</button>
+                </form>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* 📝 My Posts */}
-      <section className="section my-posts">
-        <div className="section-header">
-          <h2>📝 My Posts</h2>
-          <button onClick={() => setShowPostForm(!showPostForm)}>
-            {showPostForm ? "Cancel" : "+ New Post"}
-          </button>
-        </div>
-
+      {/* POSTS */}
+      <section className={styles.section}>
+        <h2>📝 My Posts</h2>
         {showPostForm && (
-          <form className="post-form">
+          <form onSubmit={handleCreatePost} className={styles.form}>
             <input
-              name="title"
+              placeholder="Post title"
               value={newPost.title}
-              onChange={handlePostChange}
-              placeholder="Post Title"
+              onChange={(e) =>
+                setNewPost({ ...newPost, title: e.target.value })
+              }
             />
             <textarea
-              name="content"
-              value={newPost.content}
-              onChange={handlePostChange}
-              placeholder="Content..."
+              placeholder="Post text"
+              value={newPost.text}
+              onChange={(e) => setNewPost({ ...newPost, text: e.target.value })}
             />
-            <button type="button" onClick={handlePublishPost}>
-              Publish
+            <button>Create</button>
+            <button type="button" onClick={() => setShowPostForm(false)}>
+              Cancel
             </button>
           </form>
         )}
 
-        <div className="user-posts">
-          {garageData.posts?.length > 0 ? (
-            garageData.posts.map((post) => (
-              <div className="post-card" key={post._id}>
-                <h3>{post.title}</h3>
-                <p>{post.text}</p>
-                <p className="post-date">
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p>No posts yet.</p>
-          )}
-        </div>
+        {posts.map((p) => (
+          <div key={p._id} className={styles.postCard}>
+            {editingPostId === p._id ? (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const updated = await updatePost(p._id, editPostData);
+                  setPosts(
+                    posts.map((post) => (post._id === p._id ? updated : post))
+                  );
+                  setEditingPostId(null);
+                }}
+                className={styles.form}
+              >
+                <input
+                  value={editPostData.title}
+                  onChange={(e) =>
+                    setEditPostData((d) => ({ ...d, title: e.target.value }))
+                  }
+                />
+                <textarea
+                  value={editPostData.text}
+                  onChange={(e) =>
+                    setEditPostData((d) => ({ ...d, text: e.target.value }))
+                  }
+                />
+                <button>Save</button>
+                <button type="button" onClick={() => setEditingPostId(null)}>
+                  Cancel
+                </button>
+              </form>
+            ) : (
+              <>
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+                <div className={styles.actions}>
+                  <button
+                    onClick={() => {
+                      setEditingPostId(p._id);
+                      setEditPostData({ title: p.title, text: p.text });
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => handleDeletePost(p._id)}>
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        ))}
       </section>
 
-      {/* ⏱️ My Lap Times */}
-      <section className="section my-times">
-        <div className="section-header">
-          <h2>⏱️ My Lap Times</h2>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Track</th>
-              <th>Car</th>
-              <th>Time</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {garageData.times.length === 0 ? (
-              <tr>
-                <td colSpan="4">No lap times yet.</td>
-              </tr>
-            ) : (
-              garageData.times.map((time) => (
-                <tr key={time._id}>
-                  <td>{time.trackName}</td>
-                  <td>{time.carName}</td>
-                  <td>{time.time}</td>
-                  <td>{new Date(time.date).toLocaleDateString()}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* TRACKS */}
+      <section className={styles.section}>
+        <h2>🏁 My Tracks</h2>
+        {showTrackForm && (
+          <form onSubmit={handleAddTrack} className={styles.form}>
+            <input
+              placeholder="Track name"
+              value={newTrack.name}
+              onChange={(e) =>
+                setNewTrack({ ...newTrack, name: e.target.value })
+              }
+            />
+            <input
+              placeholder="Location"
+              value={newTrack.location}
+              onChange={(e) =>
+                setNewTrack({ ...newTrack, location: e.target.value })
+              }
+            />
+            <input
+              placeholder="Image URL"
+              value={newTrack.imageUrl}
+              onChange={(e) =>
+                setNewTrack({ ...newTrack, imageUrl: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Length (meters)"
+              value={newTrack.length || ""}
+              onChange={(e) => setNewTrack({ ...newTrack, length: Number(e.target.value) })}
+            />
+            <textarea
+              placeholder="Description"
+              value={newTrack.description || ""}
+              onChange={(e) => setNewTrack({ ...newTrack, description: e.target.value })}
+            />
+            <button>Add Track</button>
+          </form>
+        )}
       </section>
     </section>
   );

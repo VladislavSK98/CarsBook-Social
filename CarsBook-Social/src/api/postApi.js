@@ -17,3 +17,7 @@ export async function getLatestPosts() {
   if (!res.ok) throw new Error('Failed to fetch latest posts');
   return res.json();
 }
+export const updatePost = (postId, data) =>
+  apiClient.put(`/posts/${postId}`, data).then(res => res.data);
+
+export const deletePost = (postId) => apiClient.delete(`/posts/${postId}`).then(res => res.data);

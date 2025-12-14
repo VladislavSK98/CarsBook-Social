@@ -11,7 +11,7 @@ const TopTracks = () => {
         async function fetchTracks() {
             try {
                 const data = await getAllTracks();
-                const topThree = data.slice(0, 3); // Само първите 3 писти
+                const topThree = data.slice(0, 4); // Само първите 3 писти
                 setTracks(topThree);
             } catch (error) {
                 console.error('Error loading tracks:', error);

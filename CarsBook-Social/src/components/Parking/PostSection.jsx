@@ -30,7 +30,7 @@ export default function PostSection() {
     if (!postTitle.trim() || !postText.trim()) return alert('Title and text required');
 
     try {
-      await createPost({ title: postTitle, text: postText, themeId: '66124673371bdf6745c6ebd4' });
+      await createPost({ title: postTitle, text: postText, });
       setPostTitle('');
       setPostText('');
       fetchPosts();
@@ -60,6 +60,11 @@ export default function PostSection() {
     } catch (err) {
       alert('Error liking post: ' + err.message);
     }
+  };
+
+   const getUsername = (user) => {
+    if (!user) return 'Anon';
+    return typeof user === 'object' ? user.username || 'Anon' : 'Anon';
   };
 
   return (

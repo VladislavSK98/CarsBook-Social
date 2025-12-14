@@ -1,0 +1,57 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 2.4rem;
+  color: var(--accent-yellow);
+  margin-bottom: 8px;
+}
+
+.location, .length, .description {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  color: var(--light-blue);
+}
+
+.trackImage {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 16px;
+  margin: 20px 0;
+}
+
+.section {
+  margin-top: 40px;
+  padding: 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.form input,
+.form select {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  flex: 1 1 150px;
+}
+
+.lapsList {
+  list-style: none;
+  padding: 0;
+}
+
+.lapItem {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}

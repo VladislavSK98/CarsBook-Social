@@ -17,6 +17,7 @@ import CarDetails from './components/CarDetails/CarDetails';
 import CarEdit from './components/Car-Edit/CarEdit';
 import Parking from './components/Parking/Parking'; 
 import Tracks from './components/Tracks/Tracks';
+import TrackDetails from "./components/Tracks/TrackDetails";
 //import Footer from './components/Footer/Footer';
 
 
@@ -39,6 +40,7 @@ function App() {
                             <Route path="/cars/:carId" element={<CarDetails />} />
                             <Route path="/cars/edit/:carId" element={<CarEdit />} />
                             <Route path="/tracks" element={<Tracks/>} />
+                            <Route path="/tracks/:id" element={<TrackDetails />} />
                          
                             <Route path="/logout" element={<Logout />} />
                         </Route>
