@@ -1,59 +1,74 @@
-import { useRegister } from "../../api/authApi";
+import { useRegister, useLogin } from "../../api/authApi";
 import { useUserContext } from "../../contexts/UserContext";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 export default function Register() {
     const navigate = useNavigate();
     const { register } = useRegister();
+    const { login } = useLogin();
     const { userLoginHandler } = useUserContext();
 
     const registerHandler = async (e) => {
-        e.preventDefault(); // ❗️ Спира презареждането на страницата
-    
+        e.preventDefault();
+
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
-    
-        if (data.password !== data['confirm-password']) {
-            console.log('Password mismatch');
+
+        // 🔐 Password validation
+        if (data.password !== data["confirm-password"]) {
+            toast.error("Passwords do not match");
             return;
         }
-    
-        const authData = await register({
-            tel: data.tel,
-            username: data.username,
-            email: data.email,
-            password: data.password,
-            repeatPassword: data['confirm-password'],
-        });
-    
-        userLoginHandler(authData);
-        navigate('/');
+
+        try {
+            // 1️⃣ Register
+            await register({
+                tel: data.tel,
+                username: data.username,
+                email: data.email,
+                password: data.password,
+                repeatPassword: data["confirm-password"],
+            });
+
+            // 2️⃣ Auto login
+            const authData = await login(data.email, data.password);
+
+            userLoginHandler({
+                ...authData.user,
+                accessToken: authData.accessToken,
+            });
+
+            toast.success("Successful registration 🎉");
+            navigate("/garage");
+
+        } catch (err) {
+            toast.error(err.message || "Registration failed");
+        }
     };
-    
 
     return (
         <section id="register-page" className="auth">
             <form id="register" onSubmit={registerHandler}>
                 <div className="container">
-                    <div className="brand-logo"></div>
                     <h2>Register</h2>
 
-                    <label htmlFor="username">Username:</label>
-                    <input type="text" name="username" id="username" className="username" />
+                    <label>Username</label>
+                    <input name="username" className="input" required />
 
-                    <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="maria@email.com" className="input" />
+                    <label>Email</label>
+                    <input type="email" name="email" className="input" required />
 
-                    <label htmlFor="pass">Password:</label>
-                    <input type="password" name="password" id="register-password" className="input" />
+                    <label>Password</label>
+                    <input type="password" name="password" className="input" required />
 
-                    <label htmlFor="con-pass">Confirm Password:</label>
-                    <input type="password" name="confirm-password" id="confirm-password" className="input" />
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm-password" className="input" required />
 
-                    <input className="button submit" type="submit" value="Register" />
+                    <input className="submit" type="submit" value="Register" />
 
                     <p className="field">
-                        <span>If you already have a profile click <a href="#">here</a></span>
+                        Already have an account? <a href="/login">Login</a>
                     </p>
                 </div>
             </form>

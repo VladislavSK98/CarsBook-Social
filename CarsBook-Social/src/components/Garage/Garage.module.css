@@ -89,7 +89,7 @@
   height: 100%;
   background: linear-gradient(180deg, #222, #111);
   z-index: 10;
-  animation-duration: 1.8s;
+  animation-duration: 0.5s;
   animation-fill-mode: forwards;
 }
 
@@ -115,7 +115,7 @@
   position: relative;
   z-index: 1;
   padding: 2rem;
-  animation: fadeIn 1s ease 1.6s forwards;
+  animation: fadeIn 0.5s ease 0.8s forwards;
   opacity: 0;
 }
 
@@ -190,4 +190,66 @@
 .timeline span {
   font-size: 0.8rem;
   opacity: 0.6;
+}
+
+/* =========================
+   EDIT CAR FORM (INLINE)
+========================= */
+
+.form {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.form input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: var(--light-blue);
+  color: var(--black);
+  font-size: 0.85rem;
+}
+
+.form input:focus {
+  outline: 2px solid var(--accent-yellow);
+}
+
+.form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--sky-blue);
+  color: var(--black);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.form button:hover {
+  background: var(--accent-yellow);
+  transform: translateY(-2px);
+}
+
+/* Optional cancel button style */
+.form button[type="button"] {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form button[type="button"]:hover {
+  background: rgba(255, 255, 255, 0.08);
 }

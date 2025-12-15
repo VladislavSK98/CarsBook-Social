@@ -1,0 +1,84 @@
+/* src/pages/Parking/PostDetails.module.css */
+
+.post-details-section {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.post-details-section h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.post-details-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0.5rem 0;
+}
+
+.post-details-section strong {
+  color: #222;
+}
+
+.post-content {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-left: 4px solid #ff4500; /* акцентен цвят */
+  border-radius: 6px;
+}
+
+.comments-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.comment-item {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f2f2f2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.comment-item strong {
+  color: #ff4500;
+}
+
+.comment-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Отделяне на заглавие и съдържание */
+.post-details-section h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #1a1a1a;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.25rem;
+}
+
+/* Адаптивност за мобилни */
+@media (max-width: 768px) {
+  .post-details-section {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .post-details-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .post-details-section h3 {
+    font-size: 1.1rem;
+  }
+}

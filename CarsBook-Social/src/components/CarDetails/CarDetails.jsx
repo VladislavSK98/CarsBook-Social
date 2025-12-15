@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getCarById, deleteCar } from '../../api/carsApi';
-import { useUserContext } from '../../contexts/UserContext';
-
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCarById, deleteCar } from "../../api/carsApi";
+import { useUserContext } from "../../contexts/UserContext";
+import styles from "./CarDetails.module.css";
 
 export default function CarDetails() {
     const { carId } = useParams();
@@ -15,45 +15,78 @@ export default function CarDetails() {
     }, [carId]);
 
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete this car?')) {
+        if (window.confirm("Are you sure you want to delete this car?")) {
             await deleteCar(carId);
-            navigate('/garage');
+            navigate("/garage");
         }
     };
 
-    if (!car) return <p>Loading...</p>;
+    if (!car) {
+        return <p className={styles.loading}>Loading...</p>;
+    }
 
-    const isOwner = (car.userId === user._id) || (car.userId?._id === user._id);
-    console.log('Car Owner:', car.ownerId);
-console.log('User ID:', user?._id);
+    const isOwner =
+        user?._id &&
+        (car.ownerId === user._id ||
+            car.ownerId?._id === user._id ||
+            car.userId === user._id ||
+            car.userId?._id === user._id);
 
     return (
-        <section className="car-details-page">
-            <div className="back-btn">
-                <button onClick={() => navigate('/garage')}>← Back to Garage</button>
+        <section className={styles.detailsPage}>
+            <div className={styles.navButtons}>
+                <button onClick={() => navigate("/garage")}>
+                    ← Back to Garage
+                </button>
+                <button onClick={() => navigate("/parking")}>
+                    ← Back to Parking
+                </button>
             </div>
 
-            <div className="car-details-card fade-in">
+            <div className={styles.card}>
                 <img
-                    src={car.imageUrl || 'https://via.placeholder.com/500x300?text=No+Image'}
+                    src={
+                        car.imageUrl ||
+                        "https://via.placeholder.com/800x400?text=No+Image"
+                    }
                     alt={`${car.make} ${car.model}`}
-                    className="car-details-img"
+                    className={styles.image}
                 />
 
-                <div className="car-details-content">
+                <div className={styles.content}>
                     <h2>
-                        <span className="car-logo">🚗</span> {car.make} {car.model}
+                        🚗 {car.make} {car.model}
                     </h2>
-                    <p><strong>Year:</strong> {car.year}</p>
-                    <p><strong>Power:</strong> {car.power} hp</p>
-                    <p><strong>Modifications:</strong> {car.mods || 'None'}</p>
 
-                    
+                    <div className={styles.infoGrid}>
+                        <p>
+                            <strong>Year:</strong> {car.year || "N/A"}
+                        </p>
+                        <p>
+                            <strong>Power:</strong> {car.power} hp
+                        </p>
+                        <p>
+                            <strong>Modifications:</strong>{" "}
+                            {car.mods || "None"}
+                        </p>
+                    </div>
 
                     {isOwner && (
-                        <div className="car-actions">
-                            <button onClick={() => navigate(`/cars/edit/${car._id}`)}>✏️ Edit</button>
-                            <button onClick={handleDelete}>❌ Delete</button>
+                        <div className={styles.actions}>
+                            <button
+                                className={styles.edit}
+                                onClick={() =>
+                                    navigate(`/cars/edit/${car._id}`)
+                                }
+                            >
+                                ✏️ Edit
+                            </button>
+                            <button
+                                className={styles.delete}
+                                onClick={handleDelete}
+                            >
+                                ❌ Delete
+                            </button>
                         </div>
                     )}
                 </div>

@@ -155,12 +155,16 @@ export default function MyGarage() {
     e.preventDefault();
 
     try {
-      const track = await addTrack({ ...newTrack, userId: user._id });
+      const createdTrack = await addTrack({ ...newTrack, owner: user._id });
 
-      setGarage((g) => ({
-        ...g,
-        tracks: [...g.tracks, track].filter((t) => t.owner === user._id),
-      }));
+// ако имаш endpoint като при колите (препоръчително)
+await addTrackForUser(user._id, createdTrack._id);
+
+setGarage((g) => ({
+  ...g,
+  tracks: [...g.tracks, createdTrack],
+}));
+
 
        setNewTrack({ name: "", location: "", imageUrl: "", description: "", length: "" });
     setShowTrackForm(false);
@@ -270,6 +274,8 @@ export default function MyGarage() {
                       />
                     ))}
                   <button>Save</button>
+                  <button type="button" onClick={() => setEditingCarId(null)}>Cancel</button>
+
                 </form>
               )}
             </div>
