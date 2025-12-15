@@ -41,7 +41,7 @@ const carSchema = new mongoose.Schema({
         type: ObjectId,
         ref: "User"  
     }]
-}, { timestamps: { createdAt: 'created_at' } });  
+}, { timestamps: true });  
 
 
 const Car = mongoose.model('Car', carSchema);

@@ -26,6 +26,6 @@ const postSchema = new mongoose.Schema({
         userId: { type: ObjectId, ref: "User" },
         text: { type: String, required: true }
     }]
-}, { timestamps: { createdAt: 'created_at' } });
+}, { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);

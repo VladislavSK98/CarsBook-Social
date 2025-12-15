@@ -19,7 +19,7 @@ function createPost(req, res, next) {
         .then(post => Promise.all([
             userModel.updateOne({ _id: userId }, { $push: { posts: post._id }, $addToSet: { themes: themeId } }),
             themeModel.findByIdAndUpdate(themeId, { $push: { posts: post._id }, $addToSet: { subscribers: userId } }, { new: true })
-        ]).then(([_, updatedTheme]) => res.status(200).json(updatedTheme)))
+        ]).then(() => res.status(201).json(newPost)))
         .catch(next);
 }
 
@@ -59,46 +59,116 @@ function getLatestsPosts(req, res, next) {
         .catch(next);
 }
 
-// ✏️ Редакция на пост
+// ✏️ Редакция на пост// 
+
+// function editPost(req, res, next) {
+//     const { postId } = req.params;
+//     const { postText, postTitle } = req.body;
+//     const { _id: userId } = req.user;
+
+//     postModel.findOneAndUpdate(
+//         { _id: postId, userId },
+//         { text: postText, title: postTitle },
+//         { new: true }
+//     )
+//         .then(updatedPost => {
+//             if (updatedPost) {
+//                 res.status(200).json(updatedPost);
+//             } else {
+//                 res.status(401).json({ message: `Not allowed!` });
+//             }
+//         })
+//         .catch(next);
+// }
 function editPost(req, res, next) {
     const { postId } = req.params;
-    const { postText, postTitle } = req.body;
+    const { text, title } = req.body;
     const { _id: userId } = req.user;
 
     postModel.findOneAndUpdate(
         { _id: postId, userId },
-        { text: postText, title: postTitle },
+        { text, title },
         { new: true }
     )
         .then(updatedPost => {
-            if (updatedPost) {
-                res.status(200).json(updatedPost);
-            } else {
-                res.status(401).json({ message: `Not allowed!` });
+            if (!updatedPost) {
+                return res.status(403).json({ message: 'Not allowed' });
             }
+            res.status(200).json(updatedPost);
         })
         .catch(next);
 }
 
-// 🗑️ Изтриване на пост
+
+// 🗑️ Изтриване на пост//
+
+// function deletePost(req, res, next) {
+//     const { postId, themeId } = req.params;
+//     const { _id: userId } = req.user;
+
+//     Promise.all([
+//         postModel.findOneAndDelete({ _id: postId, userId }),
+//         userModel.findOneAndUpdate({ _id: userId }, { $pull: { posts: postId } }),
+//         themeModel.findOneAndUpdate({ _id: themeId }, { $pull: { posts: postId } }),
+//     ])
+//         .then(([deletedOne]) => {
+//             if (deletedOne) {
+//                 res.status(200).json(deletedOne);
+//             } else {
+//                 res.status(401).json({ message: `Not allowed!` });
+//             }
+//         })
+//         .catch(next);
+// }
+// function deletePost(req, res, next) {
+//     const { postId } = req.params;
+//     const { _id: userId } = req.user;
+
+//     postModel.findOne({ _id: postId, userId })
+//         .then(post => {
+//             if (!post) {
+//                 return res.status(403).json({ message: 'Not allowed' });
+//             }
+
+//             return Promise.all([
+//                 postModel.findByIdAndDelete(postId),
+//                 userModel.updateOne({ _id: userId }, { $pull: { posts: postId } }),
+//                 themeModel.updateOne(
+//                     { _id: post.themeId },
+//                     { $pull: { posts: postId } }
+//                 )
+//             ]);
+//         })
+//         .then(() => res.status(200).json({ message: 'Post deleted' }))
+//         .catch(next);
+// }
 function deletePost(req, res, next) {
-    const { postId, themeId } = req.params;
+    const { postId } = req.params;
     const { _id: userId } = req.user;
+    console.log("Deleting postId:", postId, "userId:", userId);
 
-    Promise.all([
-        postModel.findOneAndDelete({ _id: postId, userId }),
-        userModel.findOneAndUpdate({ _id: userId }, { $pull: { posts: postId } }),
-        themeModel.findOneAndUpdate({ _id: themeId }, { $pull: { posts: postId } }),
-    ])
-        .then(([deletedOne]) => {
-            if (deletedOne) {
-                res.status(200).json(deletedOne);
-            } else {
-                res.status(401).json({ message: `Not allowed!` });
+
+    postModel.findById(postId) // вместо findOne({ _id: postId, userId })
+        .then(post => {
+            if (!post) return res.status(404).json({ message: 'Post not found' });
+            if (post.userId.toString() !== userId.toString()) {
+                return res.status(403).json({ message: 'Not allowed' });
             }
+
+            return Promise.all([
+                postModel.findByIdAndDelete(postId),
+                userModel.updateOne({ _id: userId }, { $pull: { posts: postId } }),
+                themeModel.updateOne(
+                    { _id: post.themeId },
+                    { $pull: { posts: postId } }
+                )
+            ]);
         })
+        .then(() => res.status(200).json({ message: 'Post deleted' }))
         .catch(next);
 }
+
+
 
 // 👍 Лайк/Ънлайк на пост
 async function likePost(req, res) {

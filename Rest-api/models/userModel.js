@@ -43,7 +43,8 @@ const userSchema = new mongoose.Schema({
     posts: [{
         type: ObjectId,
         ref: "Post"
-    }]
+    }],
+    tracks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }]
 }, { timestamps: { createdAt: 'created_at' } });
 
 userSchema.methods = {

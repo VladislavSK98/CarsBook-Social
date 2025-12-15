@@ -19,6 +19,8 @@ function verifyToken(token) {
     });
 }
 
+console.log("JWT Secret:", secret);
+
 module.exports = {
     createToken,
     verifyToken

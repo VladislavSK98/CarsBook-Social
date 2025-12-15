@@ -1,26 +1,33 @@
 const Garage = require('../models/garageModel');
 
 exports.getGarageByUserId = async (req, res) => {
-    try {
-        const garage = await Garage.findOne({ user: req.params.userId })
-            .populate('cars')
-            .populate('times')
-            .populate('posts');
+  try {
+    const garage = await Garage.findOne({ user: req.params.userId })
+      .populate('cars')
+      .populate('times')
+      .populate('posts'); // тук posts вече са subdocuments
 
-        if (!garage) {
-            return res.status(200).json({
-                cars: [],
-                times: [],
-                posts: [],
-                tracks: [],
-            });
-        }
-
-        res.json(garage);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error loading garage' });
+    if (!garage) {
+      return res.status(200).json({
+        cars: [],
+        times: [],
+        posts: [],
+        tracks: [],
+      });
     }
+
+    // Филтрираме постовете, за да вземем само на текущия userId
+    const userPosts = garage.posts.filter(p => p.userId?.toString() === req.params.userId);
+
+    res.json({
+      ...garage.toObject(),
+      posts: userPosts
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error loading garage' });
+  }
 };
+
 
 exports.addCarToGarage = async (req, res) => {
     try {

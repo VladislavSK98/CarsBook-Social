@@ -4,6 +4,7 @@ const trackSchema = new mongoose.Schema({
   name: { type: String, required: true },
   location: { type: String, required: true },
   length: { type: Number, required: true }, 
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   fastestLaps: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

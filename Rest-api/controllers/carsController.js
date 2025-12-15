@@ -1,8 +1,8 @@
 const { userModel, carModel } = require('../models');
 const Garage = require('../models/garageModel'); 
 
-function newCar(make, model, year, mods,userId, power, color, imageUrl) {
-    return carModel.create({ make, model, year, mods, userId, power, color, imageUrl })
+function newCar({ make, model, year, power, color, imageUrl, mods, userId }) {
+    return carModel.create({ make, model, year, power, color, imageUrl, mods, userId })
         .then(car => {
             return userModel.updateOne(
                 { _id: userId },
@@ -11,13 +11,34 @@ function newCar(make, model, year, mods,userId, power, color, imageUrl) {
         });
 }
 
+
+// function createCar(req, res, next) {
+//     const { _id: userId } = req.user;
+//     const { make, model, year, power, color, imageUrl, mods } = req.body;
+
+//     newCar(make, model, year, userId, power, color, imageUrl, mods)
+//         .then(async (car) => {
+//             // Добавяне и в гаража:
+//             let garage = await Garage.findOne({ user: userId });
+//             if (!garage) {
+//                 garage = new Garage({ user: userId, cars: [] });
+//             }
+
+//             garage.cars.push(car._id);
+//             await garage.save();
+
+//             res.status(201).json(car);
+//         })
+//         .catch(next);
+// }
+
 function createCar(req, res, next) {
     const { _id: userId } = req.user;
-    const { make, model, year, power, color, imageUrl, mods } = req.body;
 
-    newCar(make, model, year, userId, power, color, imageUrl, mods)
+    console.log('➡️ Creating car for user:', userId, 'with body:', req.body);
+
+    newCar({ ...req.body, userId })
         .then(async (car) => {
-            // Добавяне и в гаража:
             let garage = await Garage.findOne({ user: userId });
             if (!garage) {
                 garage = new Garage({ user: userId, cars: [] });
@@ -28,8 +49,12 @@ function createCar(req, res, next) {
 
             res.status(201).json(car);
         })
-        .catch(next);
+        .catch(err => {
+            console.error('❌ Error in createCar:', err);
+            next(err);
+        });
 }
+
 function getCarsByUserId(req, res, next) {
     const { userId } = req.params;  
     carModel.find({ userId })
@@ -54,37 +79,57 @@ function getAllCars(req, res, next) {
             
 }
 
+// function editCar(req, res, next) {
+//     const { carId } = req.params;
+//     const { make, model, year, power, color, imageUrl, mods } = req.body;
+//     const { _id: userId } = req.user;
+
+//     console.log('🔧 Request to edit by user:', userId);
+
+//     carModel.findById(carId).then(car => {
+//         if (!car) {
+//             console.log('🚫 Car not found');
+//             return res.status(404).json({ message: 'Car not found' });
+//         }
+//         console.log('📦 Found car, owner:', car.userId.toString());
+//         console.log('👤 Requesting user:', userId.toString());
+//     });
+    
+
+//     carModel.findOneAndUpdate(
+//         { _id: carId, },
+//         { make, model, year, power, color, imageUrl, mods },
+//         { new: true }
+//     )
+//         .then(updatedCar => {
+//             if (updatedCar) {
+//                 res.status(200).json(updatedCar);
+//             } else {
+//                 res.status(401).json({ message: 'Not allowed!' });
+//             }
+//         })
+//         .catch(next);
+// }
+
 function editCar(req, res, next) {
     const { carId } = req.params;
     const { make, model, year, power, color, imageUrl, mods } = req.body;
     const { _id: userId } = req.user;
 
-    console.log('🔧 Request to edit by user:', userId);
-
-    carModel.findById(carId).then(car => {
-        if (!car) {
-            console.log('🚫 Car not found');
-            return res.status(404).json({ message: 'Car not found' });
-        }
-        console.log('📦 Found car, owner:', car.userId.toString());
-        console.log('👤 Requesting user:', userId.toString());
-    });
-    
-
     carModel.findOneAndUpdate(
-        { _id: carId, },
+        { _id: carId, userId }, 
         { make, model, year, power, color, imageUrl, mods },
         { new: true }
     )
         .then(updatedCar => {
-            if (updatedCar) {
-                res.status(200).json(updatedCar);
-            } else {
-                res.status(401).json({ message: 'Not allowed!' });
+            if (!updatedCar) {
+                return res.status(403).json({ message: 'Not allowed' });
             }
+            res.status(200).json(updatedCar);
         })
         .catch(next);
 }
+
 
 function deleteCar(req, res, next) {
     const { carId } = req.params;
