@@ -27,10 +27,12 @@ function createPost(req, res, next) {
 function getAllPosts(req, res, next) {
     postModel.find()
         .sort({ created_at: -1 })
+        .populate('userId', 'username')          // <-- добавено
         .populate('comments.userId', 'username')
         .then(posts => res.status(200).json(posts))
         .catch(next);
 }
+
 
 // 🧠 Взема пост по ID
 function getPostById(req, res, next) {

@@ -3,7 +3,9 @@ const Track = require('../models/trackModel');
 
 async function getAllTracks(req, res) {
   try {
-    const tracks = await trackModel.find();
+    const tracks = await Track.find()
+      .populate("fastestLaps.user", "username")
+      .populate("fastestLaps.car", "make model");
     res.status(200).json(tracks);
   } catch (err) {
     console.error("Error in getAllTracks:");
@@ -107,28 +109,129 @@ async function addTrackForUser(req, res) {
 // controllers/tracksController.js
 
 
+// async function addLap(req, res) {
+//   try {
+//     const track = await Track.findById(req.params.id);
+//     if (!track) return res.status(404).json({ message: 'Track not found' });
+
+//     const lap = {
+//       user: req.body.user,
+//       car: req.body.car,
+//       time: req.body.time,
+//       condition: req.body.condition
+//     };
+
+//     track.fastestLaps.push(lap);
+//     await track.save();
+
+//     const populatedLap = await Track.findById(req.params.id)
+//       .populate('fastestLaps.user fastestLaps.car');
+
+//     res.status(201).json(populatedLap.fastestLaps.slice(-1)[0]);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Failed to add lap' });
+//   }
+// }
+
+// async function addLap(req, res) {
+//   try {
+//     const track = await Track.findById(req.params.trackId);
+//     if (!track) {
+//       return res.status(404).json({ message: "Track not found" });
+//     }
+
+//     const lap = {
+//       user: req.user._id,          // 🔐 от auth
+//       car: req.body.car,
+//       time: Number(req.body.time), // ⏱ number
+//     };
+
+//     track.fastestLaps.push(lap);
+
+//     track.fastestLaps.sort((a, b) => a.time - b.time);
+
+//     await track.save();
+
+//     const populatedTrack = await Track.findById(track._id)
+//       .populate("fastestLaps.user", "username")
+//       .populate("fastestLaps.car", "make model power");
+
+//     res.status(201).json(
+//       populatedTrack.fastestLaps[populatedTrack.fastestLaps.length - 1]
+//     );
+//   } catch (err) {
+//     console.error("Add lap error:", err);
+//     res.status(500).json({ message: "Failed to add lap" });
+//   }
+// }
 async function addLap(req, res) {
   try {
-    const track = await Track.findById(req.params.id);
-    if (!track) return res.status(404).json({ message: 'Track not found' });
+    // 
+    const track = await Track.findById(trackId)
+  .populate("fastestLaps.user", "username") // само username
+  .populate("fastestLaps.car", "make model");
+
+    if (!track) {
+      return res.status(404).json({ message: "Track not found" });
+    }
 
     const lap = {
-      user: req.body.user,
+      user: req.user?._id || req.body.user,
       car: req.body.car,
-      time: req.body.time,
-      condition: req.body.condition
+      time: Number(req.body.time),
     };
 
+    if (!lap.user || !lap.car || !lap.time) {
+      return res.status(400).json({ message: "Missing data" });
+    }
+
     track.fastestLaps.push(lap);
+    track.fastestLaps.sort((a, b) => a.time - b.time);
+
     await track.save();
 
-    const populatedLap = await Track.findById(req.params.id)
-      .populate('fastestLaps.user fastestLaps.car');
+    const populatedTrack = await Track.findById(track._id)
+      .populate("fastestLaps.user", "username")
+      .populate("fastestLaps.car", "make model");
 
-    res.status(201).json(populatedLap.fastestLaps.slice(-1)[0]);
+    res.status(201).json(
+      populatedTrack.fastestLaps[populatedTrack.fastestLaps.length - 1]
+    );
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to add lap' });
+    console.error("Add lap error:", err);
+    res.status(500).json({ message: "Failed to add lap" });
+  }
+}
+
+
+
+async function deleteLap(req, res) {
+  try {
+    const { trackId, lapId } = req.params;
+    const userId = req.user._id;
+
+    const track = await Track.findById(trackId);
+    if (!track) {
+      return res.status(404).json({ message: "Track not found" });
+    }
+
+    const lap = track.fastestLaps.id(lapId);
+    if (!lap) {
+      return res.status(404).json({ message: "Lap not found" });
+    }
+
+    if (lap.user.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    lap.deleteOne();
+    await track.save();
+
+    res.status(200).json({ message: "Lap deleted" });
+  } catch (err) {
+    console.error("Delete lap error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 }
 
@@ -141,4 +244,5 @@ module.exports = {
   addTrack,
   addTrackForUser,
   addLap,
+  deleteLap,
 };

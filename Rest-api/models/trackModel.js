@@ -8,7 +8,7 @@ const trackSchema = new mongoose.Schema({
   fastestLaps: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      time: { type: String, required: true }, 
+      time: { type: Number, required: true }, 
       car: { type: mongoose.Schema.Types.ObjectId, ref: "Car" }, // Референция към кола
     },
   ],
