@@ -165,12 +165,51 @@ async function addTrackForUser(req, res) {
 //     res.status(500).json({ message: "Failed to add lap" });
 //   }
 // }
+// async function addLap(req, res) {
+//   try {
+    
+//     const track = await Track.findById(trackId)
+//   .populate("fastestLaps.user", "username") // само username
+//   .populate("fastestLaps.car", "make model");
+
+//     if (!track) {
+//       return res.status(404).json({ message: "Track not found" });
+//     }
+
+//     const lap = {
+//       user: req.user?._id || req.body.user,
+//       car: req.body.car,
+//       time: Number(req.body.time),
+//     };
+
+//     if (!lap.user || !lap.car || !lap.time) {
+//       return res.status(400).json({ message: "Missing data" });
+//     }
+
+//     track.fastestLaps.push(lap);
+//     track.fastestLaps.sort((a, b) => a.time - b.time);
+
+//     await track.save();
+
+//     const populatedTrack = await Track.findById(track._id)
+//       .populate("fastestLaps.user", "username")
+//       .populate("fastestLaps.car", "make model");
+
+//     res.status(201).json(
+//       populatedTrack.fastestLaps[populatedTrack.fastestLaps.length - 1]
+//     );
+//   } catch (err) {
+//     console.error("Add lap error:", err);
+//     res.status(500).json({ message: "Failed to add lap" });
+//   }
+// }
 async function addLap(req, res) {
   try {
-    // 
+    const { trackId } = req.params; // ✅ ВАЖНО
+
     const track = await Track.findById(trackId)
-  .populate("fastestLaps.user", "username") // само username
-  .populate("fastestLaps.car", "make model");
+      .populate("fastestLaps.user", "username")
+      .populate("fastestLaps.car", "make model");
 
     if (!track) {
       return res.status(404).json({ message: "Track not found" });
@@ -180,6 +219,7 @@ async function addLap(req, res) {
       user: req.user?._id || req.body.user,
       car: req.body.car,
       time: Number(req.body.time),
+      condition: req.body.condition || "dry",
     };
 
     if (!lap.user || !lap.car || !lap.time) {
