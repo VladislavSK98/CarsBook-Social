@@ -55,3 +55,26 @@
   padding: 8px 0;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
+
+.navButtons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.navButtons button {
+  background: #1f2933;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.navButtons button:hover {
+  background: #374151;
+  transform: translateY(-1px);
+}

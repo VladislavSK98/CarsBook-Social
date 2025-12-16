@@ -1,6 +1,6 @@
 // src/components/Tracks/TrackDetails.jsx
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import apiClient from "../../api/apiClient";
 import styles from "./TrackDetails.module.css";
 import { UserContext } from "../../contexts/UserContext";
@@ -8,6 +8,8 @@ import { UserContext } from "../../contexts/UserContext";
 const TrackDetails = () => {
   const { id } = useParams();
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
 
   const [track, setTrack] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,9 +70,8 @@ const TrackDetails = () => {
 
       const addedLap = res.data;
 
-     const updatedTrack = await apiClient.get(`/tracks/${id}`);
-setTrack(updatedTrack.data);
-
+      const updatedTrack = await apiClient.get(`/tracks/${id}`);
+      setTrack(updatedTrack.data);
 
       setNewLap({ car: "", time: "", condition: "dry" });
     } catch (err) {
@@ -102,6 +103,12 @@ setTrack(updatedTrack.data);
 
   return (
     <div className={styles.container}>
+
+         <div className={styles.navButtons}>
+      <button onClick={() => navigate("/")}>🏠 Back to Home</button>
+      <button onClick={() => navigate("/parking")}>🅿️ Back to Parking</button>
+      <button onClick={() => navigate("/my-garage")}>🚗 Back to Garage</button>
+    </div>
       {/* TRACK INFO */}
       <h1 className={styles.title}>{track.name}</h1>
       <p className={styles.location}>
@@ -182,7 +189,7 @@ setTrack(updatedTrack.data);
               <strong>{lap.user?.username || "Unknown"}</strong> –{" "}
               {lap.car?.make} {lap.car?.model} – {lap.time} min ({lap.condition}
               )
-              {lap.user?._id === user._id && (
+              {user && lap.user?._id === user._id && (
                 <button
                   onClick={() => handleDeleteLap(lap._id)}
                   className={styles.deleteBtn}

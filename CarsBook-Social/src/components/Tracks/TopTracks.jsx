@@ -7,19 +7,27 @@ import { Link } from 'react-router-dom';
 const TopTracks = () => {
     const [tracks, setTracks] = useState([]);
 
-    useEffect(() => {
-        async function fetchTracks() {
-            try {
-                const data = await getAllTracks();
-                const topThree = data.slice(0, 4); // Само първите 3 писти
-                setTracks(topThree);
-            } catch (error) {
-                console.error('Error loading tracks:', error);
-            }
-        }
+   useEffect(() => {
+  async function fetchTracks() {
+    try {
+      const data = await getAllTracks();
 
-        fetchTracks();
-    }, []);
+      const mostActiveTracks = data
+        .sort(
+          (a, b) =>
+            (b.fastestLaps?.length || 0) - (a.fastestLaps?.length || 0)
+        )
+        .slice(0, 4);
+
+      setTracks(mostActiveTracks);
+    } catch (error) {
+      console.error("Error loading tracks:", error);
+    }
+  }
+
+  fetchTracks();
+}, []);
+
 
     return (
         <div className="top-tracks">

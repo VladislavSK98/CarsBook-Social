@@ -157,22 +157,27 @@ export default function MyGarage() {
     try {
       const createdTrack = await addTrack({ ...newTrack, owner: user._id });
 
-// ако имаш endpoint като при колите (препоръчително)
-await addTrackForUser(user._id, createdTrack._id);
+      // ако имаш endpoint като при колите (препоръчително)
+      await addTrackForUser(user._id, createdTrack._id);
 
-setGarage((g) => ({
-  ...g,
-  tracks: [...g.tracks, createdTrack],
-}));
+      setGarage((g) => ({
+        ...g,
+        tracks: [...g.tracks, createdTrack],
+      }));
 
-
-       setNewTrack({ name: "", location: "", imageUrl: "", description: "", length: "" });
-    setShowTrackForm(false);
+      setNewTrack({
+        name: "",
+        location: "",
+        imageUrl: "",
+        description: "",
+        length: "",
+      });
+      setShowTrackForm(false);
     } catch (err) {
       console.error("Failed to add track", err);
     }
     setShowTrackForm(false);
-    setReloadGarage(prev => prev + 1);
+    setReloadGarage((prev) => prev + 1);
   };
 
   // ===== RENDER =====
@@ -274,8 +279,9 @@ setGarage((g) => ({
                       />
                     ))}
                   <button>Save</button>
-                  <button type="button" onClick={() => setEditingCarId(null)}>Cancel</button>
-
+                  <button type="button" onClick={() => setEditingCarId(null)}>
+                    Cancel
+                  </button>
                 </form>
               )}
             </div>
@@ -391,12 +397,16 @@ setGarage((g) => ({
               type="number"
               placeholder="Length (meters)"
               value={newTrack.length || ""}
-              onChange={(e) => setNewTrack({ ...newTrack, length: Number(e.target.value) })}
+              onChange={(e) =>
+                setNewTrack({ ...newTrack, length: Number(e.target.value) })
+              }
             />
             <textarea
               placeholder="Description"
               value={newTrack.description || ""}
-              onChange={(e) => setNewTrack({ ...newTrack, description: e.target.value })}
+              onChange={(e) =>
+                setNewTrack({ ...newTrack, description: e.target.value })
+              }
             />
             <button>Add Track</button>
           </form>

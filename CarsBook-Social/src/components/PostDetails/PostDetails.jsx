@@ -1,63 +1,76 @@
 // src/pages/Parking/PostDetails.jsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getPostById } from "../../api/postApi";
+import { useParams, useNavigate } from "react-router-dom";
+import { getPostById, likePost } from "../../api/postApi";
 import styles from "./PostDetails.module.css";
 
 export default function PostDetails() {
   const { postId } = useParams();
+  const navigate = useNavigate();
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
-  const fetchPost = async () => {
-    try {
-      const data = await getPostById(postId); // ← тук вместо getPosts
-      setPost(data);
-    } catch (err) {
-      console.error("Error fetching post details:", err);
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const data = await getPostById(postId);
+        setPost(data);
+      } catch (err) {
+        console.error("Error fetching post details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPost();
+  }, [postId]);
+
+  const handleLike = async () => {
+    await likePost(postId);
+    const updated = await getPostById(postId);
+    setPost(updated);
   };
-  fetchPost();
-}, [postId]);
 
   if (loading) return <p>Loading post...</p>;
   if (!post) return <p>Post not found.</p>;
 
   return (
-    <section className={styles["post-details-section"]}>
+    <section className={styles.wrapper}>
+      <div className={styles.card}>
+        {/* NAV BUTTONS */}
         <div className={styles.navButtons}>
-        <button onClick={() => navigate("/")}>Back to Home</button>
-        <button onClick={() => navigate("/parking")}>Back to Parking</button>
-        <button onClick={() => navigate("/my-garage")}>Back to Garage</button>
-      </div>
-      <h2>{post.title}</h2>
-      <p>
-        <strong>By:</strong> {post.userId?.username || "Anon"}
-      </p>
-      <p>
-        <strong>Date:</strong>{" "}
-        {new Date(post.createdAt).toLocaleDateString()}
-      </p>
-      <div className={styles["post-content"]}>
-        <p>{post.text}</p>
-      </div>
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/parking")}>Parking</button>
+          <button onClick={() => navigate("/garage")}>Garage</button>
+        </div>
 
-      <h3>Comments ({post.comments?.length || 0})</h3>
-      {post.comments?.length > 0 ? (
-        <ul className={styles["comments-list"]}>
-          {post.comments.map((comment) => (
-            <li key={comment._id} className={styles["comment-item"]}>
-              <strong>{comment.userId?.username || "User"}:</strong>{" "}
-              {comment.text}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No comments yet.</p>
-      )}
+        <h2>{post.title}</h2>
+
+        <div className={styles.meta}>
+          <span>👤 {post.userId?.username || "Anon"}</span>
+          <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
+        </div>
+
+        <p className={styles.text}>{post.text}</p>
+
+        <button className={styles.likeBtn} onClick={handleLike}>
+          ❤️ {post.likes?.length || 0} Likes
+        </button>
+
+        <h3>💬 Comments ({post.comments?.length || 0})</h3>
+
+        {post.comments.length > 0 ? (
+          <ul className={styles.comments}>
+            {post.comments.map((c) => (
+              <li key={c._id}>
+                <strong>{c.userId?.username || "User"}:</strong> {c.text}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No comments yet.</p>
+        )}
+      </div>
     </section>
   );
 }

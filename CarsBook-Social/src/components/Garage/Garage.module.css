@@ -89,7 +89,7 @@
   height: 100%;
   background: linear-gradient(180deg, #222, #111);
   z-index: 10;
-  animation-duration: 0.5s;
+  animation-duration: 0.2s;
   animation-fill-mode: forwards;
 }
 
@@ -115,7 +115,7 @@
   position: relative;
   z-index: 1;
   padding: 2rem;
-  animation: fadeIn 0.5s ease 0.8s forwards;
+  animation: fadeIn 0.2s ease 0.4s forwards;
   opacity: 0;
 }
 

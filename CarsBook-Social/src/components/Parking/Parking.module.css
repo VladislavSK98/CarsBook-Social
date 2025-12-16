@@ -358,3 +358,19 @@
   /* User column */
   padding-right: 24px; /* увеличаваме разстоянието към Car */
 }
+
+.detailsBtn {
+  background: transparent;
+  border: 1px solid #e10600;
+  color: #e10600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 0.2s;
+}
+
+.detailsBtn:hover {
+  background: #e10600;
+  color: #fff;
+}

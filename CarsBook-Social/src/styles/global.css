@@ -398,3 +398,17 @@ html, body {
 .auth .field a:hover {
   text-decoration: underline;
 }
+
+.btn.details-btn {
+  background: transparent;
+  border: 2px solid #e10600;
+  color: #e10600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.btn.details-btn:hover {
+  background: #e10600;
+  color: #fff;
+}
