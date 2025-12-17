@@ -19,7 +19,7 @@ import Parking from './components/Parking/Parking';
 import Tracks from './components/Tracks/Tracks';
 import TrackDetails from "./components/Tracks/TrackDetails";
 import PostDetails from './components/PostDetails/PostDetails';
-//import Footer from './components/Footer/Footer';
+import Footer from './components/Footer/Footer';
 
 
 
@@ -60,7 +60,7 @@ function App() {
 
                 <ToastContainer />
             </div>
-            {/* <Footer /> */}
+            <Footer />
         </UserProvider>
     )
 }

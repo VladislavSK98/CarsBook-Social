@@ -11,7 +11,10 @@ export default function Header() {
       <div className={styles.container}>
         <div className={styles.left}>
           <img src="src/assets/fonlogo.png" alt="Logo" className={styles.logo} />
-          <span className={styles.title}>CarsBook</span>
+          <span className={styles.title}>
+  <Link to="/" className={styles.title}>CarsBook</Link>
+</span>
+
         </div>
 
         <nav className={styles.nav}>

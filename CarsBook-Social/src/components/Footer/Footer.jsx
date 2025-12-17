@@ -1,39 +1,27 @@
-// src/components/Footer.jsx
 import { Link } from "react-router-dom";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import styles from "./Footer.module.css";
 
 export default function Footer() {
-    return (
-        <footer className="footer">
-            <div className="footer-content">
-                <div className="footer-logo">
-                    <h2>CarRacingHub</h2>
-                    <p>Adrenaline. Speed. Community.</p>
-                </div>
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.footerleft}>
+        <h2>CarsBook-Social</h2>
+        <span>&copy; {new Date().getFullYear()}</span>
+      </div>
 
-                <div className="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="/tracks">Tracks</Link></li>
-                        <li><Link to="/parking">Cars</Link></li>
-                        <li><Link to="/posts">Posts</Link></li>
-                    </ul>
-                </div>
+      <div className={styles.footerlinks}>
+        <Link to="/">Home</Link>
+        <Link to="/tracks">Tracks</Link>
+        <Link to="/parking">Cars</Link>
+        <Link to="/garage">Garage</Link>
+      </div>
 
-                <div className="footer-socials">
-                    <h4>Follow Us</h4>
-                    <div className="icons">
-                        <a href="#"><FaFacebook /></a>
-                        <a href="#"><FaInstagram /></a>
-                        <a href="#"><FaTwitter /></a>
-                    </div>
-                </div>
-            </div>
-
-            <div className="footer-bottom">
-                <p>&copy; {new Date().getFullYear()} CarRacingHub. All rights reserved.</p>
-            </div>
-        </footer>
-    );
+      <div className={styles.footerright}>
+        <a href="https://www.facebook.com/"><FaFacebook /></a>
+        <a href="https://www.instagram.com/"><FaInstagram /></a>
+        <a href="https://x.com/"><FaTwitter /></a>
+      </div>
+    </footer>
+  );
 }
